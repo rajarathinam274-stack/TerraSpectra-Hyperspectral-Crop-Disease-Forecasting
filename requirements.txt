@@ -1,0 +1,10 @@
+numpy
+pandas
+requests
+matplotlib
+scipy
+scikit-learn
+spectral
+jupyter
+pytest
+pyyaml
