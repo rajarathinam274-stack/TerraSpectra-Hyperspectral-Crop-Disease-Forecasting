@@ -49,4 +49,4 @@ If using local compute, connect the notebook to a local Jupyter runtime before r
 
 ## Current status
 
-Day 1 repository workflow and dataset provenance documentation are committed. The metadata download, Colab execution and complete test run remain pending; no model performance or forecasting result is claimed.
+Day 1 repository workflow and dataset provenance documentation are committed. See the [Day 1 work log](docs/day1_work_log.md). The metadata download, Colab execution and complete test run remain pending; no model performance or forecasting result is claimed.
