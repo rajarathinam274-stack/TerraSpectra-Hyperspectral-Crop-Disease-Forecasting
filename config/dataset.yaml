@@ -1,0 +1,15 @@
+dataset:
+  name: "Early detection of Septoria infection on wheat leaves using hyperspectral imaging data"
+  doi: "10.57745/WVP0FJ"
+  persistent_id: "doi:10.57745/WVP0FJ"
+  dataverse_api: "https://entrepot.recherche.data.gouv.fr/api"
+  metadata_dir: "data/metadata"
+  selected_metadata_files:
+    - "Data_description.csv"
+    - "VNIR_data.csv"
+    - "SWIR_data.csv"
+
+research:
+  initial_task: "dataset_inventory_and_metadata_validation"
+  forecasting_claim_allowed: false
+  note: "Reassess forecasting feasibility only after validating temporal labels, repeated sample identities and experimental design."
