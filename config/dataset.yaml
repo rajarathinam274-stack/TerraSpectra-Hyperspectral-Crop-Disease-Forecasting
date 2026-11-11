@@ -9,7 +9,27 @@ dataset:
     - "VNIR_data.csv"
     - "SWIR_data.csv"
 
+experimental_design:
+  pot_count: 48
+  genotypes:
+    - "EPO_067"
+    - "EPO_068"
+  pots_per_genotype: 24
+  infected_pots_per_genotype: 12
+  non_infected_pots_per_genotype: 12
+  plants_per_pot: 6
+  plants_per_side: 3
+  treatment_assignment_unit: "pot"
+  conservative_validation_group: "pot_id"
+  folder_date_format: "YYYYMMDD"
+  pot_side_pattern: "{pot_number}_{side}"
+  side_codes:
+    D: "right"
+    G: "left"
+  inoculation_date_candidate: "2021-03-12"
+  inoculation_date_status: "provisional; confirm against annotation CSVs and all archive dates"
+
 research:
   initial_task: "dataset_inventory_and_metadata_validation"
   forecasting_claim_allowed: false
-  note: "Reassess forecasting feasibility only after validating temporal labels, repeated sample identities and experimental design."
+  note: "Reassess forecasting feasibility only after validating temporal labels, repeated sample identities and future outcomes. Do not infer genotype/treatment from pot-number ranges."
