@@ -52,6 +52,8 @@ def find_column(columns, role: str) -> str | None:
         "plant": {"plant", "plant_id"},
     }
     for norm, original in normalized.items():
+        if role in {"pot", "side"} and norm in {"num_side", "pot_side"}:
+            continue
         if set(norm.split("_")) & token_sets[role]:
             return original
     return None
