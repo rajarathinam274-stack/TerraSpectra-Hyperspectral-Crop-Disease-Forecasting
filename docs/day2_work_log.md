@@ -36,8 +36,8 @@ The dataset page lists annotation files and public checksums:
 
 ## Verification
 
-- Three focused synthetic-fixture tests passed locally (`3 passed`).
-- Python syntax/import validation was performed in the isolated test environment.
+- Four focused synthetic-fixture tests passed locally (`4 passed`).
+- Python syntax/import validation and a synthetic end-to-end sample-map run were performed in an isolated test environment. The smoke test generated candidate date/pot-side rows and both audit outputs from synthetic VNIR/SWIR CSVs.
 - The GitHub repository state was inspected before changes; Day 1 files and the latest commit were fetched from the requested repository.
 - The execution container cannot resolve `entrepot.recherche.data.gouv.fr` (DNS resolution failure). Therefore the three annotation CSVs were not downloaded or read in this run.
 - No exact CSV column names, row-level pot/genotype mapping, persistent plant/leaf identity, model metrics or forecasting result are claimed.
