@@ -28,8 +28,8 @@ ALIASES = {
     "plant": {"plant", "plant_id", "plant_number", "plant_no"},
 }
 
-DATE_RE = re.compile(r"(?<!\\d)(20\\d{6})(?!\\d)")
-POT_SIDE_RE = re.compile(r"(?<!\\d)(\\d{1,2})_([DG])(?=$|[^A-Za-z])", re.IGNORECASE)
+DATE_RE = re.compile(r"(?<!\d)(20\d{6})(?!\d)")
+POT_SIDE_RE = re.compile(r"(?<!\d)(\d{1,2})_([DG])(?=$|[^A-Za-z])", re.IGNORECASE)
 
 
 def normalize_column(value: Any) -> str:
@@ -97,7 +97,7 @@ def candidate_record(row: pd.Series, columns: dict[str, str | None],
 
     pot_id, side = parse_pot_side_token(combined_text)
     if not pot_id and pot_value:
-        digits = re.search(r"\\d{1,2}", pot_value)
+        digits = re.search(r"\d{1,2}", pot_value)
         if digits:
             number = int(digits.group())
             if 1 <= number <= 48:
