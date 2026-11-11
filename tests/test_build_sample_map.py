@@ -34,3 +34,6 @@ def test_candidate_record_keeps_explicit_fields_separate_from_inferred_tokens():
 
 def test_column_detection_does_not_invent_missing_leaf_id():
     assert find_column(["Date", "Pot", "Treatment"], "leaf") is None
+def test_combined_pot_side_column_is_not_misreported_as_separate_fields():
+    assert find_column(["NUM_SIDE"], "pot") is None
+    assert find_column(["NUM_SIDE"], "side") is None
