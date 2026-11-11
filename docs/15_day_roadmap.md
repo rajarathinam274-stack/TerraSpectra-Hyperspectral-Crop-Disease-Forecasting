@@ -5,7 +5,7 @@ A day is complete only when its artifact exists and its validation status is sta
 | Day | Focus | Concrete deliverable | Exit condition |
 |---:|---|---|---|
 | 1 | Dataset provenance and acquisition | Dataset citation, file inventory, verified annotation CSV downloads, metadata audit | File checksums and annotation schemas recorded; blockers documented |
-| 2 | Annotation semantics and sample map | Data dictionary, ID hierarchy, date/DPI mapping, treatment/label audit | Biological unit and leakage-safe grouping strategy justified |
+| 2 | Annotation semantics and sample map | Data dictionary, ID hierarchy, date/DPI mapping, treatment/label audit | Pot-level grouping is source-supported; exact CSV semantics and longitudinal IDs verified from actual files |
 | 3 | HSI ingestion and calibration | ENVI reader, header parser, raw-to-reflectance calibration plan | Wavelengths, units, dark/white references and data types validated |
 | 4 | Leaf ROI and spectral extraction | Reproducible ROI extraction and per-leaf spectra table | Coordinate conventions and extraction checks pass on sample images |
 | 5 | Exploratory spectral analysis | Class/date/genotype summaries, spectral plots, PCA | EDA uses correctly grouped samples and documents missingness/outliers |
@@ -19,14 +19,18 @@ A day is complete only when its artifact exists and its validation status is sta
 | 13 | Robustness and interpretation | Error analysis, feature interpretation and sensitivity checks | Weaknesses, uncertainty and controlled-environment limits are documented |
 | 14 | Final report and presentation | Technical report, figures, slides and demo script | Claims match verified experiments and limitations |
 | 15 | Reproducibility and handover | Clean setup, pinned environment, final checks and release | Another user can reproduce the documented workflow |
- 
+
 ## Non-negotiable research rules
 
 1. Classification at time t is not forecasting at time t + delta.
 2. Do not infer repeated leaf identity from date-stamped folders alone.
 3. Group related pixels, spectra, images and repeated observations by the strongest verified biological unit.
-4. For future-state evaluation, train on earlier time points and test on later time points, with biological groups held out.
+4. For future-state evaluation, train on earlier time points and test on later dates, with biological groups held out.
 5. Fit imputation, scaling, feature selection and dimensionality reduction inside training folds.
 6. Report macro-F1 and class-wise precision/recall; do not rely on accuracy alone.
 7. Keep raw data out of Git. Track provenance, checksums, configuration and derived summaries instead.
 8. Controlled growth-chamber results must not be described as field-validated performance.
+
+## Day 2 progress
+
+The source-supported experiment hierarchy and pot-level grouping policy are documented in `docs/day2_annotation_semantics.md`. A conservative candidate-map builder is available at `scripts/build_sample_map.py`. Day 2 remains **partially complete** until the actual annotation CSVs are downloaded and their exact columns, pot/genotype/treatment mapping and repeated biological IDs are inspected.
