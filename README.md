@@ -4,24 +4,30 @@ Research project investigating hyperspectral signatures associated with Septoria
 
 ## Research scope
 
-Primary source: the public wheat Septoria hyperspectral imaging dataset hosted by Recherche Data Gouv ([DOI 10.57745/WVP0FJ](https://doi.org/10.57745/WVP0FJ)). See [dataset provenance](docs/dataset_provenance.md) and the [Day 2 annotation semantics](docs/day2_annotation_semantics.md) before interpreting fields.
+Primary source: the public wheat Septoria hyperspectral imaging dataset hosted by Recherche Data Gouv (DOI 10.57745/WVP0FJ). See docs/dataset_provenance.md, docs/day2_annotation_semantics.md and docs/day3_hsi_ingestion_calibration.md before interpreting fields or spectral data.
 
 **Scientific distinction:** classification or early detection identifies infection status at an observed time point. Forecasting predicts a future disease state. This project will only claim forecasting if stable repeated biological identities and valid future-state labels are demonstrated.
 
-## Dataset metadata and annotation workflow
+## Dataset metadata workflow
 
-```bash
-pip install -r requirements.txt
-python scripts/download_metadata.py
-python scripts/audit_annotations.py
-python scripts/build_sample_map.py
-python scripts/inspect_metadata.py
-pytest -q
-```
+    pip install -r requirements.txt
+    python scripts/download_metadata.py
+    python scripts/audit_annotations.py
+    python scripts/build_sample_map.py
+    python scripts/inspect_metadata.py
+    pytest -q
 
 The downloader retrieves only the three small annotation CSVs and records file inventory, checksums and SHA-256 hashes. Large VNIR/SWIR image ZIP archives are intentionally not downloaded automatically.
 
-The sample-map builder extracts candidate date and pot-side keys. It does not infer missing plant/leaf identities, genotype assignments or treatment labels. Read the Day 2 documentation and inspect its JSON output before modelling.
+## HSI ingestion and calibration
+
+Inspect an extracted ENVI header and its matching HySpex binary:
+
+    python scripts/inspect_hsi.py /path/to/image.hdr --image /path/to/image.hyspex --modality VNIR --output reports/image_header.json
+
+Use --modality SWIR for SWIR files. The script compares observed header metadata with paper-reported sensor profiles without forcing a reshape. See docs/day3_hsi_ingestion_calibration.md for the dark-current and Spectralon reflectance rules.
+
+The published .hyspex files are described as dark-current corrected. Do not subtract dark current a second time. Do not claim reflectance until the Spectralon reference panel/acquisition and any certified reflectance curve have been validated.
 
 ## Google Colab
 
@@ -29,14 +35,12 @@ Open the [Day 1 validation notebook](https://colab.research.google.com/github/ra
 
 ## Repository structure
 
-- `config/`: dataset and experiment configuration
-- `docs/dataset_provenance.md`: dataset facts and limitations
-- `docs/day2_annotation_semantics.md`: biological hierarchy, data dictionary and leakage policy
-- `docs/15_day_roadmap.md`: day-by-day deliverables
-- `scripts/`: reproducible metadata acquisition and audit utilities
-- `notebooks/`: Colab notebooks
-- `data/metadata/`: downloaded metadata and audit outputs (not committed)
-- `data/raw/`, `data/processed/`: source and derived data (not committed)
+- config/: dataset and experiment configuration
+- docs/: dataset provenance, annotation semantics, roadmap and work logs
+- scripts/: reproducible metadata acquisition, sample mapping and HSI utilities
+- notebooks/: Colab notebooks
+- data/metadata/: downloaded metadata and audit outputs (not committed)
+- data/raw/, data/processed/: source and derived data (not committed)
 
 ## Methodology safeguards
 
@@ -51,4 +55,4 @@ Open the [Day 1 validation notebook](https://colab.research.google.com/github/ra
 
 ## Current status
 
-Day 1 provenance and metadata workflow are committed. Day 2 has a source-supported pot-level hierarchy, provisional data dictionary and candidate-map builder. The actual annotation CSVs have not yet been downloaded in the execution environment, so exact headers, row-level mapping and persistent plant/leaf identities remain unverified. No model performance or forecasting result is claimed.
+Day 1 provenance and metadata workflow are committed. Day 2 has a source-supported pot-level hierarchy and candidate-map builder. Day 3 adds ENVI header inspection and calibration functions with synthetic tests. Actual annotation CSVs and .hyspex archives have not yet been downloaded in the execution environment, so exact annotation columns, persistent plant/leaf IDs, real header values and reflectance calibration remain unverified. No model performance or forecasting result is claimed.
