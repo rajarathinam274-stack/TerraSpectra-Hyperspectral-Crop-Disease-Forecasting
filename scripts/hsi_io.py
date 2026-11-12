@@ -112,8 +112,8 @@ def inspect_envi_header(header_path: str | Path, image_path: str | Path | None =
 
 
 def open_envi_memmap(header_path: str | Path, image_path: str | Path | None = None,
-                     interleave: str | None = None):
-    """Return (SpyFile, memory map); None preserves source interleave."""
+                     interleave: str = "bip"):
+    """Return (SpyFile, BIP memory map) with bands on the last axis."""
     header_path = Path(header_path)
     if image_path is None:
         image_path = header_path.with_suffix(".hyspex")
