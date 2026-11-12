@@ -6,7 +6,7 @@ A day is complete only when its artifact exists and its validation status is sta
 |---:|---|---|---|
 | 1 | Dataset provenance and acquisition | Dataset citation, file inventory, verified annotation CSV downloads, metadata audit | File checksums and annotation schemas recorded; blockers documented |
 | 2 | Annotation semantics and sample map | Data dictionary, ID hierarchy, date/DPI mapping, treatment/label audit | Pot-level grouping is source-supported; exact CSV semantics and longitudinal IDs verified from actual files |
-| 3 | HSI ingestion and calibration | ENVI reader, header parser, raw-to-reflectance calibration plan | Wavelengths, units, dark/white references and data types validated |
+| 3 | HSI ingestion and calibration | ENVI reader, header parser, raw-to-reflectance calibration plan | Synthetic calibration tests pass; real header wavelengths, units, dtype, interleave, byte order, dimensions and reference workflow validated |
 | 4 | Leaf ROI and spectral extraction | Reproducible ROI extraction and per-leaf spectra table | Coordinate conventions and extraction checks pass on sample images |
 | 5 | Exploratory spectral analysis | Class/date/genotype summaries, spectral plots, PCA | EDA uses correctly grouped samples and documents missingness/outliers |
 | 6 | Baseline classifier | Logistic-regression baseline with train-only preprocessing | Group-aware validation and baseline metrics are reproducible |
@@ -33,4 +33,10 @@ A day is complete only when its artifact exists and its validation status is sta
 
 ## Day 2 progress
 
-The source-supported experiment hierarchy and pot-level grouping policy are documented in `docs/day2_annotation_semantics.md`. A conservative candidate-map builder is available at `scripts/build_sample_map.py`. Day 2 remains **partially complete** until the actual annotation CSVs are downloaded and their exact columns, pot/genotype/treatment mapping and repeated biological IDs are inspected.
+The source-supported experiment hierarchy and pot-level grouping policy are documented in docs/day2_annotation_semantics.md. A conservative candidate-map builder is available at scripts/build_sample_map.py. Day 2 remains **partially complete** until the actual annotation CSVs are downloaded and their exact columns, pot/genotype/treatment mapping and repeated biological IDs are inspected.
+
+## Day 3 progress
+
+Added scripts/hsi_io.py for lazy ENVI header inspection, memory-mapped cube opening, wavelength-unit conversion, sensor-profile comparison and two separate reflectance paths. Added scripts/inspect_hsi.py, ten synthetic calibration tests and docs/day3_hsi_ingestion_calibration.md. The paper reports that .hyspex data are already dark-current corrected, so the published-data path does not subtract dark current twice.
+
+Day 3 remains **partially complete** until a real .hdr/.hyspex pair is inspected and the Spectralon SRS99 reference representation is confirmed. The execution runner could not install Spectral Python or reach the dataset host because of DNS/network resolution failures. No real reflectance cube has been produced.
