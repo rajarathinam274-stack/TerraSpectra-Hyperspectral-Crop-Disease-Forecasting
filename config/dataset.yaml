@@ -11,9 +11,7 @@ dataset:
 
 experimental_design:
   pot_count: 48
-  genotypes:
-    - "EPO_067"
-    - "EPO_068"
+  genotypes: ["EPO_067", "EPO_068"]
   pots_per_genotype: 24
   infected_pots_per_genotype: 12
   non_infected_pots_per_genotype: 12
@@ -28,6 +26,30 @@ experimental_design:
     G: "left"
   inoculation_date_candidate: "2021-03-12"
   inoculation_date_status: "provisional; confirm against annotation CSVs and all archive dates"
+
+hsi:
+  format: "ENVI"
+  binary_extension: ".hyspex"
+  header_extension: ".hdr"
+  published_hyspex_dark_current_corrected: true
+  reflectance_standard: "Spectralon SRS99"
+  sensor_profiles:
+    VNIR:
+      sensor: "HySpex VNIR-1800"
+      expected_bands: 216
+      expected_wavelength_range_nm: [411, 993]
+      paper_reported_nominal_shape: [1370, 1024]
+    SWIR:
+      sensor: "HySpex SWIR-384"
+      expected_bands: 256
+      expected_wavelength_range_nm: [964, 2494]
+      paper_reported_nominal_shape: [420, 320]
+  calibration:
+    raw_intensity_formula: "(sample - dark) / (white - dark)"
+    published_hyspex_formula: "sample_dark_corrected / white_dark_corrected"
+    do_not_subtract_dark_twice: true
+    white_reference_roi_or_file: "must be identified and validated from the actual archive"
+    certified_standard_curve: "apply only if available and wavelength-aligned; otherwise document unity-reference assumption"
 
 research:
   initial_task: "dataset_inventory_and_metadata_validation"
