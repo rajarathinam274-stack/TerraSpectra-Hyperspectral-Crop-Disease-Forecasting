@@ -16,7 +16,7 @@ Source: https://pmc.ncbi.nlm.nih.gov/articles/PMC11919375/
 - For each header, it pairs the `.hyspex` file and adjacent `<image_stem>_leaf*.csv` coordinate files.
 - It uses `scripts/hsi_io.py` to open the ENVI cube as a BIP memory map. Only ROI pixel spectra are materialized.
 - It reads the first two CSV columns as `(row, column)`, maps them to zero-based source-cube indices, removes duplicate coordinates and calculates the per-band arithmetic mean, matching the paper's described leaf average.
-- It writes one row per coordinate-defined leaf ROI, with `band_000` ... `band_NNN` columns, and a JSON audit with coordinate counts, finite-value fraction, path-derived date/pot-side candidates and failures.
+- It writes one row per coordinate-defined leaf ROI, with `band_000` ... `band_NNN` columns, and a JSON audit with coordinate counts, finite-value fraction, path-derived date/pot-side candidates, per-image native wavelength arrays, recognized nm conversions and failures.
 - Treatment and genotype are deliberately not inferred from pot number. They must be joined from verified annotation tables.
 - `leaf_id_within_image` is not treated as a persistent longitudinal leaf ID.
 - Spectra are labelled `dark_current_corrected_intensity_not_reflectance`. Day 3's white-reference uncertainty remains unresolved; this script does not silently call raw intensity reflectance.
