@@ -93,3 +93,5 @@ def test_batch_extracts_per_leaf_rows_and_preserves_provenance(tmp_path, monkeyp
     assert frame.loc[0, "spectrum_domain"] == "dark_current_corrected_intensity_not_reflectance"
     assert frame.loc[0, "band_000"] == pytest.approx(3.0)
     assert frame.loc[0, "band_001"] == pytest.approx(5.0)
+    axis = audit["spectral_axes_by_image"]["20210311/26_G/26_G.hdr"]
+    assert axis["wavelengths_nm"] == [500.0, 600.0]
