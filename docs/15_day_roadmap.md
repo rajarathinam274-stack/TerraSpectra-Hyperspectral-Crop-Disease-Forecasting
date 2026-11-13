@@ -39,4 +39,10 @@ The source-supported experiment hierarchy and pot-level grouping policy are docu
 
 Added scripts/hsi_io.py for lazy ENVI header inspection, memory-mapped cube opening, wavelength-unit conversion, sensor-profile comparison and two separate reflectance paths. Added scripts/inspect_hsi.py, ten synthetic calibration tests and docs/day3_hsi_ingestion_calibration.md. The paper reports that .hyspex data are already dark-current corrected, so the published-data path does not subtract dark current twice.
 
-Day 3 remains **partially complete** until a real .hdr/.hyspex pair is inspected and the Spectralon SRS99 reference representation is confirmed. The execution runner could not install Spectral Python or reach the dataset host because of DNS/network resolution failures. No real reflectance cube has been produced.
+Day 3 remains **partially complete** until a real .hdr/.hyspex pair is inspected and the Spectralon SRS99 reference representation is confirmed. No real reflectance cube has been produced.
+
+## Day 4 progress
+
+Added scripts/extract_leaf_spectra.py, tests/test_extract_leaf_spectra.py and docs/day4_roi_extraction.md. The extractor discovers per-image leaf coordinate CSVs, reads the paper-specified (vertical row, horizontal column) coordinate order, computes one mean spectrum per ROI from a BIP memory map, records pot/date/image provenance candidates, and emits a JSON audit. It requires explicit coordinate indexing base and coordinate frame; reframed-image offsets must be supplied. It rejects out-of-bounds coordinates and labels the output as dark-current-corrected intensity rather than reflectance.
+
+Eight synthetic tests, Python compilation, CLI help and a mocked batch smoke test passed. Day 4 remains **partially complete** until one real image/header/coordinate trio is inspected and coordinate base, frame, crop offsets and overlay registration are confirmed. No real spectra were extracted.
