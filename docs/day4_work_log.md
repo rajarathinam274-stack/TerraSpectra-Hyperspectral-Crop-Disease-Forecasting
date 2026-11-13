@@ -22,7 +22,7 @@ Added `scripts/extract_leaf_spectra.py`:
 - Requires explicit row/column crop offsets for reframed-image coordinates.
 - Deduplicates coordinate pairs, audits nonnumeric rows and rejects out-of-bounds coordinates.
 - Extracts only selected ROI pixels from a BIP memory map and computes per-band arithmetic mean.
-- Writes one row per leaf ROI with provenance columns and band columns, plus a JSON extraction audit.
+- Writes one row per leaf ROI with provenance columns and band columns, plus a JSON extraction audit containing each image's native wavelength axis and nm conversion when units are recognized.
 - Marks output as dark-current-corrected intensity, not reflectance.
 - Does not infer treatment/genotype or persistent leaf identity.
 
