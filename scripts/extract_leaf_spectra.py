@@ -16,9 +16,9 @@ import numpy as np
 import pandas as pd
 
 try:
-    from .hsi_io import open_envi_memmap
+    from .hsi_io import open_envi_memmap, wavelength_values_to_nm
 except ImportError:
-    from hsi_io import open_envi_memmap
+    from hsi_io import open_envi_memmap, wavelength_values_to_nm
 
 DATE_RE = re.compile(r"^(20\d{6})$")
 POT_SIDE_RE = re.compile(r"^(\d{1,2})_([DG])$", re.IGNORECASE)
@@ -155,8 +155,15 @@ def extract_image_rois(header_path, coordinate_base, modality, coordinate_frame,
     root = Path(root) if root else header.parent
     spy_image, cube = open_envi_memmap(header, image, interleave="bip")
     wavelengths = spy_image.metadata.get("wavelength")
+    wavelength_units = spy_image.metadata.get("wavelength units") or spy_image.metadata.get("wavelength_units")
     if wavelengths is not None and len(wavelengths) != cube.shape[-1]:
         raise ROIValidationError("Header wavelength count does not match cube band count.")
+    wavelengths_nm = wavelength_values_to_nm(wavelengths, wavelength_units)
+    spectral_axis = {
+        "wavelengths_native": None if wavelengths is None else [float(value) for value in wavelengths],
+        "wavelength_units": wavelength_units or "",
+        "wavelengths_nm": None if wavelengths_nm is None else wavelengths_nm.tolist(),
+    }
 
     records, audits = [], []
     for coordinate_csv in coordinate_files:
@@ -183,7 +190,8 @@ def extract_image_rois(header_path, coordinate_base, modality, coordinate_frame,
         records.append(record)
         audits.append({**metadata, "modality": modality.upper(),
                        "coordinate_file": coordinate_csv.name,
-                       "coordinate_audit": coord_audit, "cube_audit": cube_audit})
+                       "coordinate_audit": coord_audit, "cube_audit": cube_audit,
+                       "spectral_axis": spectral_axis})
     return records, audits
 
 
@@ -215,8 +223,13 @@ def run_batch(root, modality, coordinate_base, coordinate_frame, output_csv, aud
     output_csv.parent.mkdir(parents=True, exist_ok=True)
     audit_json.parent.mkdir(parents=True, exist_ok=True)
     pd.DataFrame(all_records).to_csv(output_csv, index=False)
+    spectral_axes_by_image = {}
+    for item in all_audits:
+        spectral_axes_by_image[item["image_relative_path"]] = item["spectral_axis"]
+        item.pop("spectral_axis", None)
     audit = {
         "root": str(root), "modality": modality.upper(),
+        "spectral_axes_by_image": spectral_axes_by_image,
         "coordinate_base": coordinate_base, "coordinate_frame": coordinate_frame,
         "row_offset": row_offset, "column_offset": col_offset,
         "headers_discovered": len(headers), "leaf_spectra_extracted": len(all_records),
