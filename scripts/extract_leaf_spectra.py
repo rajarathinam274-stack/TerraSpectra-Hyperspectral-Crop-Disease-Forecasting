@@ -20,8 +20,8 @@ try:
 except ImportError:
     from hsi_io import open_envi_memmap
 
-DATE_RE = re.compile(r"^(20\\d{6})$")
-POT_SIDE_RE = re.compile(r"^(\\d{1,2})_([DG])$", re.IGNORECASE)
+DATE_RE = re.compile(r"^(20\d{6})$")
+POT_SIDE_RE = re.compile(r"^(\d{1,2})_([DG])$", re.IGNORECASE)
 
 
 class ROIValidationError(ValueError):
