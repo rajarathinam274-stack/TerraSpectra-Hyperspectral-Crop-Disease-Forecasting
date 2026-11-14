@@ -4,7 +4,7 @@ Research project investigating hyperspectral signatures associated with Septoria
 
 ## Research scope
 
-Primary source: the public wheat Septoria hyperspectral imaging dataset hosted by Recherche Data Gouv (DOI 10.57745/WVP0FJ). See docs/dataset_provenance.md, docs/day2_annotation_semantics.md, docs/day3_hsi_ingestion_calibration.md and docs/day4_roi_extraction.md before interpreting fields or spectral data.
+Primary source: the public wheat Septoria hyperspectral imaging dataset hosted by Recherche Data Gouv (DOI 10.57745/WVP0FJ). See docs/dataset_provenance.md, docs/day2_annotation_semantics.md, docs/day3_hsi_ingestion_calibration.md, docs/day4_roi_extraction.md and docs/day5_exploratory_spectral_analysis.md before interpreting fields or spectral data.
 
 **Scientific distinction:** classification or early detection identifies infection status at an observed time point. Forecasting predicts a future disease state. This project will only claim forecasting if stable repeated biological identities and valid future-state labels are demonstrated.
 
@@ -21,15 +21,11 @@ The downloader retrieves only the three small annotation CSVs and records file i
 
 ## HSI ingestion and calibration
 
-Inspect an extracted ENVI header and its matching HySpex binary:
-
     python scripts/inspect_hsi.py /path/to/image.hdr --image /path/to/image.hyspex --modality VNIR --output reports/image_header.json
 
-Use --modality SWIR for SWIR files. See docs/day3_hsi_ingestion_calibration.md for the dark-current and Spectralon reflectance rules. The published .hyspex files are described as dark-current corrected; do not subtract dark current a second time. Do not claim reflectance until the Spectralon reference panel/acquisition and any certified reflectance curve have been validated.
+Use --modality SWIR for SWIR files. See docs/day3_hsi_ingestion_calibration.md for dark-current and Spectralon rules. Published .hyspex files are described as dark-current corrected; do not subtract dark current twice. Do not claim reflectance until the Spectralon reference workflow is validated.
 
 ## Leaf ROI extraction
-
-The Day 4 extractor reads one coordinate CSV per leaf and writes one mean spectrum per leaf ROI:
 
     python scripts/extract_leaf_spectra.py \
       --root /path/to/extracted/VNIR \
@@ -40,9 +36,20 @@ The Day 4 extractor reads one coordinate CSV per leaf and writes one mean spectr
       --audit data/processed/vnir_roi_audit.json \
       --max-images 1
 
-The coordinate base and coordinate frame must be verified from the actual archive before running. If the CSV coordinates refer to a cropped/reframed image, use --coordinate-frame reframed_image and supply verified --row-offset and --col-offset values. The extractor rejects out-of-bounds coordinates; it does not guess indexing or crop transforms. See docs/day4_roi_extraction.md.
+The coordinate base and frame must be verified from the actual archive. For reframed coordinates, provide verified row/column offsets. See docs/day4_roi_extraction.md.
 
-Output is explicitly labelled dark-current-corrected intensity, not reflectance, until the Spectralon reference workflow is validated.
+## Exploratory spectral analysis (Day 5)
+
+After real ROI spectra are extracted, run unlabelled QC and date profiles:
+
+    python scripts/explore_spectra.py \
+      --spectra-csv data/processed/vnir_leaf_spectra.csv \
+      --audit-json data/processed/vnir_roi_audit.json \
+      --output-dir reports/eda/vnir
+
+For class/genotype summaries, join only verified annotations using explicit keys and actual inspected column names. Example syntax is documented in docs/day5_exploratory_spectral_analysis.md. The EDA aggregates ROIs to pot-date units before summaries/PCA, flags outliers without deleting them, and refuses inconsistent wavelength axes.
+
+PCA is descriptive only. For predictive models, imputation, scaling and dimensionality reduction must be fitted within training folds. Treatment assignment is not a symptom/severity outcome and is not a forecasting target.
 
 ## Google Colab
 
@@ -52,7 +59,7 @@ Open the [Day 1 validation notebook](https://colab.research.google.com/github/ra
 
 - config/: dataset and experiment configuration
 - docs/: dataset provenance, annotation semantics, roadmap and work logs
-- scripts/: reproducible metadata acquisition, sample mapping, HSI and ROI utilities
+- scripts/: metadata acquisition, sample mapping, HSI, ROI and EDA utilities
 - notebooks/: Colab notebooks
 - data/metadata/: downloaded metadata and audit outputs (not committed)
 - data/raw/, data/processed/: source and derived data (not committed)
@@ -70,4 +77,4 @@ Open the [Day 1 validation notebook](https://colab.research.google.com/github/ra
 
 ## Current status
 
-Days 1–3 have committed provenance, annotation/sample-map, ENVI inspection and calibration scaffolds with synthetic tests. Day 4 adds per-leaf ROI extraction with explicit coordinate-base/frame declarations and synthetic tests. Actual annotation CSVs, .hyspex archives, coordinate indexing convention, crop offsets and Spectralon reference representation remain unverified in the execution environment. No real spectral table, model performance or forecasting result is claimed.
+Days 1–4 have committed research, acquisition, HSI and ROI-processing scaffolds with synthetic validation. Day 5 adds pot-date aggregated spectral EDA, annotation-join checks, wavelength-axis consistency checks, outlier reporting and descriptive PCA. The actual annotation CSVs, ENVI cubes, coordinate convention, crop offsets and Spectralon reference remain unverified in the execution environment. No real spectral trend, model metric or forecasting result is claimed.
