@@ -20,7 +20,7 @@ import pandas as pd
 from sklearn.decomposition import PCA
 from sklearn.impute import SimpleImputer
 
-BAND_PATTERN = re.compile(r"^band_(\\d+)$")
+BAND_PATTERN = re.compile(r"^band_(\d+)$")
 DEFAULT_GROUP = "pot_id_candidate"
 DEFAULT_DATE = "date_folder_yyyymmdd_candidate"
 DEFAULT_IMAGE = "image_relative_path"
