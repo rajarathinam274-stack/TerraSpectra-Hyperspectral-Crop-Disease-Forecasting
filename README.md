@@ -78,3 +78,20 @@ Open the [Day 1 validation notebook](https://colab.research.google.com/github/ra
 ## Current status
 
 Days 1–4 have committed research, acquisition, HSI and ROI-processing scaffolds with synthetic validation. Day 5 adds pot-date aggregated spectral EDA, annotation-join checks, wavelength-axis consistency checks, outlier reporting and descriptive PCA. The actual annotation CSVs, ENVI cubes, coordinate convention, crop offsets and Spectralon reference remain unverified in the execution environment. No real spectral trend, model metric or forecasting result is claimed.
+
+
+## Logistic-regression baseline (Day 6)
+
+After Day 5 has produced a pot-date table with verified annotation labels, run one fixed acquisition date:
+
+```bash
+python scripts/train_baseline.py \
+  --input-csv reports/eda/vnir/pot_date_spectra.csv \
+  --output-dir models/day6_vnir \
+  --target-column ACTUAL_VERIFIED_LABEL_COLUMN \
+  --target-semantics treatment_assignment \
+  --date-value VERIFIED_DATE_YYYYMMDD \
+  --n-splits 5 --random-state 42
+```
+
+Inspect `docs/day6_logistic_regression_baseline.md` before choosing target semantics. The baseline uses pot-grouped 5-fold validation and train-fold-only imputation/scaling. Treatment-assignment classification is not symptom detection or forecasting. No real-data model metrics are claimed until the annotation and spectral pipeline has been executed.
