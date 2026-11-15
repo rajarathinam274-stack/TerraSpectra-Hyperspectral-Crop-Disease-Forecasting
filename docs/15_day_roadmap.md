@@ -52,3 +52,14 @@ Eight synthetic tests, Python compilation, CLI help and a mocked batch smoke tes
 Added scripts/explore_spectra.py, tests/test_explore_spectra.py, docs/day5_exploratory_spectral_analysis.md and docs/day5_work_log.md. The EDA pipeline validates explicit annotation joins, checks per-image wavelength-axis consistency, aggregates ROIs to pot-date means, reports missingness and IQR outlier flags, generates date-specific spectra plots and descriptive PCA.
 
 Six focused synthetic tests, Python compilation, CLI help and synthetic end-to-end output generation passed. Day 5 implementation is complete, but real EDA remains **blocked** until verified annotations and at least one real Day 4 spectral table are generated. No real class/date trend or PCA separation is claimed.
+
+
+## Day 6 progress
+
+Added `scripts/train_baseline.py`, `tests/test_train_baseline.py` and `docs/day6_logistic_regression_baseline.md`. The baseline accepts Day 5 pot-date spectra at one preselected acquisition date, requires explicit target semantics and exactly one row per pot, and uses 5-fold `StratifiedGroupKFold` by pot. Median imputation and standard scaling are inside the model Pipeline and are fitted on training folds only. It writes out-of-fold predictions, fold assignments, classification metrics, confusion matrix and a separately all-data-fitted pipeline artifact.
+
+Six focused synthetic tests, Python compilation and CLI help passed locally. No real dataset model was trained because verified annotation labels and Day 4 spectra are not available in the execution environment. No real metric is claimed.
+
+During Day 6 review, corrected a double-escaped digit pattern in the Day 5 EDA band-column detector; the intended `band_001` columns now match the regex. Day 5's existing band-order test should be included in the next complete test run.
+
+Day 6 implementation is complete; scientific model evaluation remains **blocked** pending actual annotation downloads, validated ROI extraction and a verified target label. A treatment-assignment target supports treatment discrimination only, not symptom detection or future forecasting.
