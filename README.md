@@ -59,7 +59,7 @@ Open the [Day 1 validation notebook](https://colab.research.google.com/github/ra
 
 - config/: dataset and experiment configuration
 - docs/: dataset provenance, annotation semantics, roadmap and work logs
-- scripts/: metadata acquisition, sample mapping, HSI, ROI and EDA utilities
+- scripts/: metadata acquisition, sample mapping, HSI, ROI, EDA and model utilities
 - notebooks/: Colab notebooks
 - data/metadata/: downloaded metadata and audit outputs (not committed)
 - data/raw/, data/processed/: source and derived data (not committed)
@@ -71,27 +71,40 @@ Open the [Day 1 validation notebook](https://colab.research.google.com/github/ra
 3. Keep both sides and every date from a pot in the same validation partition.
 4. Do not randomly split pixels, spectra or related images from the same biological unit.
 5. Use chronological evaluation for future-state prediction, with biological groups held out.
-6. Fit preprocessing and feature selection on training data only.
+6. Fit imputation, scaling and feature selection on training data only.
 7. Report macro-F1, class-wise precision/recall and confusion matrices; accuracy alone is insufficient.
 8. Controlled growth-chamber results must not be presented as field-validated performance.
 
 ## Current status
 
-Days 1–4 have committed research, acquisition, HSI and ROI-processing scaffolds with synthetic validation. Day 5 adds pot-date aggregated spectral EDA, annotation-join checks, wavelength-axis consistency checks, outlier reporting and descriptive PCA. The actual annotation CSVs, ENVI cubes, coordinate convention, crop offsets and Spectralon reference remain unverified in the execution environment. No real spectral trend, model metric or forecasting result is claimed.
+Days 1–4 have committed research, acquisition, HSI and ROI-processing scaffolds with synthetic validation. Day 5 adds pot-date aggregated spectral EDA, annotation-join checks, wavelength-axis consistency checks, outlier reporting and descriptive PCA. Day 6 adds a pot-grouped Logistic Regression baseline. Day 7 adds a fixed-specification Logistic Regression/RBF-SVM/Random Forest comparison using identical grouped folds.
 
+The actual annotation CSVs, ENVI cubes, coordinate convention, crop offsets and Spectralon reference remain unverified in the execution environment. Day 7 has four passing focused synthetic tests, but no real spectra have been modelled. No real spectral trend, model metric or forecasting result is claimed.
 
 ## Logistic-regression baseline (Day 6)
 
 After Day 5 has produced a pot-date table with verified annotation labels, run one fixed acquisition date:
 
-```bash
-python scripts/train_baseline.py \
-  --input-csv reports/eda/vnir/pot_date_spectra.csv \
-  --output-dir models/day6_vnir \
-  --target-column ACTUAL_VERIFIED_LABEL_COLUMN \
-  --target-semantics treatment_assignment \
-  --date-value VERIFIED_DATE_YYYYMMDD \
-  --n-splits 5 --random-state 42
-```
+    python scripts/train_baseline.py \
+      --input-csv reports/eda/vnir/pot_date_spectra.csv \
+      --output-dir models/day6_vnir \
+      --target-column ACTUAL_VERIFIED_LABEL_COLUMN \
+      --target-semantics treatment_assignment \
+      --date-value VERIFIED_DATE_YYYYMMDD \
+      --n-splits 5 --random-state 42
 
-Inspect `docs/day6_logistic_regression_baseline.md` before choosing target semantics. The baseline uses pot-grouped 5-fold validation and train-fold-only imputation/scaling. Treatment-assignment classification is not symptom detection or forecasting. No real-data model metrics are claimed until the annotation and spectral pipeline has been executed.
+Inspect docs/day6_logistic_regression_baseline.md before choosing target semantics. The baseline uses pot-grouped 5-fold validation and train-fold-only imputation/scaling. Treatment-assignment classification is not symptom detection or forecasting.
+
+## Fixed model comparison (Day 7)
+
+Run the fixed LR/SVM/RF comparison on the same verified pot-date table:
+
+    python scripts/compare_models.py \
+      --input-csv reports/eda/vnir/pot_date_spectra.csv \
+      --output-dir models/day7_vnir \
+      --target-column ACTUAL_VERIFIED_LABEL_COLUMN \
+      --target-semantics treatment_assignment \
+      --date-value VERIFIED_DATE_YYYYMMDD \
+      --n-splits 5 --random-state 42
+
+See docs/day7_model_comparison.md for model settings, shared folds, outputs and selection limitations. Day 7 settings are not tuned. Day 8 must use nested group-aware validation. No real model metrics are claimed until verified annotations and real spectral features are available.
