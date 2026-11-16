@@ -53,13 +53,20 @@ Added scripts/explore_spectra.py, tests/test_explore_spectra.py, docs/day5_explo
 
 Six focused synthetic tests, Python compilation, CLI help and synthetic end-to-end output generation passed. Day 5 implementation is complete, but real EDA remains **blocked** until verified annotations and at least one real Day 4 spectral table are generated. No real class/date trend or PCA separation is claimed.
 
-
 ## Day 6 progress
 
-Added `scripts/train_baseline.py`, `tests/test_train_baseline.py` and `docs/day6_logistic_regression_baseline.md`. The baseline accepts Day 5 pot-date spectra at one preselected acquisition date, requires explicit target semantics and exactly one row per pot, and uses 5-fold `StratifiedGroupKFold` by pot. Median imputation and standard scaling are inside the model Pipeline and are fitted on training folds only. It writes out-of-fold predictions, fold assignments, classification metrics, confusion matrix and a separately all-data-fitted pipeline artifact.
+Added scripts/train_baseline.py, tests/test_train_baseline.py and docs/day6_logistic_regression_baseline.md. The baseline accepts Day 5 pot-date spectra at one preselected acquisition date, requires explicit target semantics and exactly one row per pot, and uses 5-fold StratifiedGroupKFold by pot. Median imputation and standard scaling are inside the model Pipeline and are fitted on training folds only. It writes out-of-fold predictions, fold assignments, classification metrics, confusion matrix and a separately all-data-fitted pipeline artifact.
 
 Six focused synthetic tests, Python compilation and CLI help passed locally. No real dataset model was trained because verified annotation labels and Day 4 spectra are not available in the execution environment. No real metric is claimed.
 
-During Day 6 review, corrected a double-escaped digit pattern in the Day 5 EDA band-column detector; the intended `band_001` columns now match the regex. Day 5's existing band-order test should be included in the next complete test run.
+During Day 6 review, corrected a double-escaped digit pattern in the Day 5 EDA band-column detector; the intended band_001 columns now match the regex. Day 5's existing band-order test should be included in the next complete test run.
 
 Day 6 implementation is complete; scientific model evaluation remains **blocked** pending actual annotation downloads, validated ROI extraction and a verified target label. A treatment-assignment target supports treatment discrimination only, not symptom detection or future forecasting.
+
+## Day 7 progress
+
+Added scripts/compare_models.py, tests/test_compare_models.py, docs/day7_model_comparison.md and docs/day7_work_log.md. The comparison includes the Day 6 Logistic Regression baseline, RBF-SVM and Random Forest with fixed, untuned specifications. A single 5-fold StratifiedGroupKFold split list is materialized once and reused across all three models. Pot overlap is explicitly rejected; median imputation and scaling are fitted within each training fold, with scaling omitted for Random Forest.
+
+Four focused synthetic-fixture tests passed. Python compilation and CLI help passed. The tests validate shared group folds, artifact generation and input guards on synthetic data only. No actual annotation CSVs or real Day 4 spectra were available, so no real model metric or winning model is reported. Day 7 implementation is complete; real-data comparison remains blocked.
+
+The Day 7 comparison is exploratory. Choosing a model using the same OOF scores creates selection optimism; Day 8 must use nested group-aware validation for tuning and model selection. Treatment-assignment classification remains distinct from symptom detection and future disease forecasting.
