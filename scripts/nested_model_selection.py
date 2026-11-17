@@ -203,6 +203,28 @@ def run_nested_selection(
 
     summaries, all_fold_rows, all_search_records = {}, [], []
     inner_split_records = {}
+    inner_splits_by_outer = {}
+    # Materialize each inner split list once; all six strategies reuse it.
+    for outer_fold, (train_idx, _test_idx) in enumerate(outer, start=1):
+        y_train = y.iloc[train_idx].reset_index(drop=True)
+        groups_train = groups.iloc[train_idx].reset_index(drop=True)
+        X_train = X.iloc[train_idx].reset_index(drop=True)
+        inner_counts = pd.DataFrame({"y": y_train, "group": groups_train}).drop_duplicates().groupby("y")["group"].nunique()
+        if int(inner_counts.min()) < inner_splits:
+            raise NestedSelectionError(
+                f"Outer fold {outer_fold}: each class needs at least {inner_splits} "
+                f"training pots for inner CV; counts={inner_counts.to_dict()}."
+            )
+        inner = list(StratifiedGroupKFold(
+            n_splits=inner_splits, shuffle=True,
+            random_state=random_state + 1000 + outer_fold,
+        ).split(X_train, y_train, groups_train))
+        _, records = validate_splits(
+            inner, y_train, groups_train, labels, f"inner_outer_{outer_fold}"
+        )
+        inner_splits_by_outer[outer_fold] = inner
+        inner_split_records[str(outer_fold)] = records
+
     for model_name in model_names:
         for feature_strategy in feature_strategies:
             strategy_name = f"{model_name}__{feature_strategy}"
@@ -213,20 +235,7 @@ def run_nested_selection(
                 X_train, y_train = X.iloc[train_idx].reset_index(drop=True), y.iloc[train_idx].reset_index(drop=True)
                 groups_train = groups.iloc[train_idx].reset_index(drop=True)
                 X_test, y_test = X.iloc[test_idx], y.iloc[test_idx]
-                inner_counts = pd.DataFrame({"y": y_train, "group": groups_train}).drop_duplicates().groupby("y")["group"].nunique()
-                if int(inner_counts.min()) < inner_splits:
-                    raise NestedSelectionError(
-                        f"Outer fold {outer_fold}: each class needs at least {inner_splits} "
-                        f"training pots for inner CV; counts={inner_counts.to_dict()}."
-                    )
-                inner = list(StratifiedGroupKFold(
-                    n_splits=inner_splits, shuffle=True,
-                    random_state=random_state + 1000 + outer_fold,
-                ).split(X_train, y_train, groups_train))
-                _, inner_records = validate_splits(
-                    inner, y_train, groups_train, labels, f"inner_outer_{outer_fold}"
-                )
-                inner_split_records[str(outer_fold)] = inner_records
+                inner = inner_splits_by_outer[outer_fold]
 
                 estimator, param_grid = build_candidate(
                     model_name, feature_strategy, len(bands), random_state + outer_fold
@@ -254,11 +263,19 @@ def run_nested_selection(
                 all_fold_rows.append(fold_metric)
                 best_params = dict(search.best_params_)
                 selected_k = best_params.get("selector__k")
+                selector_step = search.best_estimator_.named_steps["selector"]
+                if selector_step == "passthrough":
+                    selected_features = list(bands)
+                else:
+                    selected_features = [
+                        band for band, keep in zip(bands, selector_step.get_support()) if keep
+                    ]
                 selected_params.append({
                     "outer_fold": outer_fold,
                     "best_inner_macro_f1": float(search.best_score_),
                     "best_params": best_params,
                     "selected_k": int(selected_k) if selected_k is not None else None,
+                    "selected_features": selected_features,
                     "warnings": [str(item.message) for item in caught],
                 })
                 all_search_records.append({
@@ -274,6 +291,10 @@ def run_nested_selection(
             pooled = metric_bundle(y, predictions, labels)
             fold_f1 = np.asarray([row["macro_f1"] for row in fold_rows], dtype=float)
             selected_k_values = [p["selected_k"] for p in selected_params if p["selected_k"] is not None]
+            feature_frequency = {}
+            for item in selected_params:
+                for feature in item["selected_features"]:
+                    feature_frequency[feature] = feature_frequency.get(feature, 0) + 1
             summaries[strategy_name] = {
                 "model": model_name, "feature_selection": feature_strategy,
                 "outer_oof_metrics": pooled,
@@ -282,6 +303,8 @@ def run_nested_selection(
                 "fold_metrics": fold_rows,
                 "inner_best_scores_are_tuning_scores_not_generalization_estimates": True,
                 "selected_k_by_outer_fold": selected_k_values,
+                "selected_features_by_outer_fold": [p["selected_features"] for p in selected_params],
+                "selected_feature_frequency_across_outer_folds": feature_frequency,
                 "outer_fold_best_params": selected_params,
             }
             prediction_table = selected[[group_column, date_column, target_column]].copy()
@@ -307,6 +330,7 @@ def run_nested_selection(
             "outer_fold_macro_f1_mean": summary["outer_fold_macro_f1_mean"],
             "outer_fold_macro_f1_std": summary["outer_fold_macro_f1_std"],
             "selected_k_by_outer_fold": json.dumps(summary["selected_k_by_outer_fold"]),
+            "selected_feature_frequency": json.dumps(summary["selected_feature_frequency_across_outer_folds"], sort_keys=True),
         })
     comparison = pd.DataFrame(comparison_rows).sort_values("outer_oof_macro_f1", ascending=False)
     comparison.to_csv(output_dir / "feature_selection_comparison.csv", index=False)
