@@ -42,3 +42,6 @@ Acquire and audit actual metadata and one real ROI/spectral sample in Colab befo
 ## Day 8 verification refinement
 
 A post-commit review found that deterministic inner split lists were being regenerated for each strategy. The implementation now materializes each outer fold's inner split list once and reuses it across all six strategies. It also records selected band names and their frequency across outer folds for descriptive feature-selection stability analysis. The focused synthetic suite was rerun after this refinement: five tests passed; compileall and CLI help passed.
+
+
+Runtime refinement: default inner folds are three; BLAS thread pools are limited to one during GridSearchCV to avoid oversubscription. A synthetic 5-outer/3-inner run completed successfully; focused tests remain 3-outer/2-inner for speed.
