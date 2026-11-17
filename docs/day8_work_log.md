@@ -37,3 +37,8 @@ Treatment assignment is not an observed symptom label. Same-date classification 
 ## Next action
 
 Acquire and audit actual metadata and one real ROI/spectral sample in Colab before reporting any scientific score. Then run Day 8 on a verified one-date pot-level table, or document that the available labels support treatment discrimination only.
+
+
+## Day 8 verification refinement
+
+A post-commit review found that deterministic inner split lists were being regenerated for each strategy. The implementation now materializes each outer fold's inner split list once and reuses it across all six strategies. It also records selected band names and their frequency across outer folds for descriptive feature-selection stability analysis. The focused synthetic suite was rerun after this refinement: five tests passed; compileall and CLI help passed.
