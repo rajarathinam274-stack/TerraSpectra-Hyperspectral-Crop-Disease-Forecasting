@@ -26,6 +26,7 @@ from sklearn.model_selection import GridSearchCV, StratifiedGroupKFold
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVC
+from threadpoolctl import threadpool_limits
 
 DEFAULT_DATE = "date_folder_yyyymmdd_candidate"
 DEFAULT_GROUP = "pot_id_candidate"
@@ -161,7 +162,7 @@ def metric_bundle(y_true, y_pred, labels):
 def run_nested_selection(
     input_csv, output_dir, *, target_column, target_semantics, date_value,
     date_column=DEFAULT_DATE, group_column=DEFAULT_GROUP,
-    outer_splits=5, inner_splits=4, random_state=42, n_jobs=1,
+    outer_splits=5, inner_splits=3, random_state=42, n_jobs=1,
 ):
     if target_semantics not in ALLOWED_TARGET_SEMANTICS:
         raise NestedSelectionError(f"target_semantics must be one of {sorted(ALLOWED_TARGET_SEMANTICS)}.")
@@ -247,7 +248,8 @@ def run_nested_selection(
                 )
                 with warnings.catch_warnings(record=True) as caught:
                     warnings.simplefilter("always")
-                    search.fit(X_train, y_train)
+                    with threadpool_limits(limits=1):
+                        search.fit(X_train, y_train)
                 prediction = search.best_estimator_.predict(X_test).astype(str)
                 oof[test_idx] = prediction
 
@@ -405,8 +407,8 @@ def main():
     parser.add_argument("--date-column", default=DEFAULT_DATE)
     parser.add_argument("--group-column", default=DEFAULT_GROUP)
     parser.add_argument("--outer-splits", type=int, default=5)
-    parser.add_argument("--inner-splits", type=int, default=4)
-    parser.add_argument("--random-state", type=int, default=42)
+    parser.add_argument("--inner-splits", type=int, default=3)
+    parser.add_argument("--random-state", type=int, default=32)
     parser.add_argument("--n-jobs", type=int, default=1)
     args = parser.parse_args()
     report = run_nested_selection(
