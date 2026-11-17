@@ -74,7 +74,7 @@ The Day 7 comparison is exploratory. Choosing a model using the same OOF scores 
 
 ## Day 8 progress
 
-Added scripts/nested_model_selection.py, tests/test_nested_model_selection.py, docs/day8_nested_model_selection.md and docs/day8_work_log.md. The workflow compares three model families crossed with no feature selection and ANOVA SelectKBest. Five outer pot-grouped folds estimate each predeclared tuned procedure; four inner pot-grouped folds tune hyperparameters by macro-F1. Outer folds are shared across all strategies; inner folds are shared within each outer training partition. Imputation, scaling and feature selection remain inside Pipelines and are fitted only on training partitions.
+Added scripts/nested_model_selection.py, tests/test_nested_model_selection.py, docs/day8_nested_model_selection.md and docs/day8_work_log.md. The workflow compares three model families crossed with no feature selection and ANOVA SelectKBest. Five outer pot-grouped folds estimate each predeclared tuned procedure; three inner pot-grouped folds tune hyperparameters by macro-F1. Outer folds are shared across all strategies; inner folds are shared within each outer training partition. Imputation, scaling and feature selection remain inside Pipelines and are fitted only on training partitions.
 
 Five focused synthetic tests, Python compilation and CLI help passed. The tests use 20 synthetic pots and do not establish biological performance. The official dataset page timed out during direct retrieval; actual annotations, ENVI data, coordinate registration and real Day 4 spectra remain unavailable. No real model metric or forecast result is claimed.
 
