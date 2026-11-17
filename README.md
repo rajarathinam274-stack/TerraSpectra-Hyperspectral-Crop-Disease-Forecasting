@@ -120,6 +120,6 @@ Run nested pot-grouped tuning only after the Day 5 pot-date table has verified a
       --target-column ACTUAL_VERIFIED_LABEL_COLUMN \
       --target-semantics treatment_assignment \
       --date-value VERIFIED_DATE_YYYYMMDD \
-      --outer-splits 5 --inner-splits 4 --random-state 42 --n-jobs 1
+      --outer-splits 5 --inner-splits 3 --random-state 42 --n-jobs 1
 
 See docs/day8_nested_model_selection.md. Inner folds tune parameters; outer folds evaluate each predeclared model/feature-selection procedure. Imputation, scaling and ANOVA selection are fitted inside training folds. Treatment-assignment classification is not symptom detection or future forecasting. No real metrics are claimed until verified annotations and spectra are available.
