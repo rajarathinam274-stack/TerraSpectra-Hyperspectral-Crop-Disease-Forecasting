@@ -70,3 +70,12 @@ Added scripts/compare_models.py, tests/test_compare_models.py, docs/day7_model_c
 Four focused synthetic-fixture tests passed. Python compilation and CLI help passed. The tests validate shared group folds, artifact generation and input guards on synthetic data only. No actual annotation CSVs or real Day 4 spectra were available, so no real model metric or winning model is reported. Day 7 implementation is complete; real-data comparison remains blocked.
 
 The Day 7 comparison is exploratory. Choosing a model using the same OOF scores creates selection optimism; Day 8 must use nested group-aware validation for tuning and model selection. Treatment-assignment classification remains distinct from symptom detection and future disease forecasting.
+
+
+## Day 8 progress
+
+Added scripts/nested_model_selection.py, tests/test_nested_model_selection.py, docs/day8_nested_model_selection.md and docs/day8_work_log.md. The workflow compares three model families crossed with no feature selection and ANOVA SelectKBest. Five outer pot-grouped folds estimate each predeclared tuned procedure; four inner pot-grouped folds tune hyperparameters by macro-F1. Outer folds are shared across all strategies; inner folds are shared within each outer training partition. Imputation, scaling and feature selection remain inside Pipelines and are fitted only on training partitions.
+
+Five focused synthetic tests, Python compilation and CLI help passed. The tests use 20 synthetic pots and do not establish biological performance. The official dataset page timed out during direct retrieval; actual annotations, ENVI data, coordinate registration and real Day 4 spectra remain unavailable. No real model metric or forecast result is claimed.
+
+Day 8 implementation is complete after commit verification; real-data model selection remains blocked. The six outer-CV strategy scores are estimates for predeclared procedures. Choosing the best among those six after inspecting results adds another selection step; a final choice requires an untouched external or separately predeclared evaluation.

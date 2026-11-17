@@ -108,3 +108,18 @@ Run the fixed LR/SVM/RF comparison on the same verified pot-date table:
       --n-splits 5 --random-state 42
 
 See docs/day7_model_comparison.md for model settings, shared folds, outputs and selection limitations. Day 7 settings are not tuned. Day 8 must use nested group-aware validation. No real model metrics are claimed until verified annotations and real spectral features are available.
+
+
+## Nested model selection (Day 8)
+
+Run nested pot-grouped tuning only after the Day 5 pot-date table has verified annotations and real ROI spectra:
+
+    python scripts/nested_model_selection.py \
+      --input-csv reports/eda/vnir/pot_date_spectra.csv \
+      --output-dir models/day8_vnir \
+      --target-column ACTUAL_VERIFIED_LABEL_COLUMN \
+      --target-semantics treatment_assignment \
+      --date-value VERIFIED_DATE_YYYYMMDD \
+      --outer-splits 5 --inner-splits 4 --random-state 42 --n-jobs 1
+
+See docs/day8_nested_model_selection.md. Inner folds tune parameters; outer folds evaluate each predeclared model/feature-selection procedure. Imputation, scaling and ANOVA selection are fitted inside training folds. Treatment-assignment classification is not symptom detection or future forecasting. No real metrics are claimed until verified annotations and spectra are available.
