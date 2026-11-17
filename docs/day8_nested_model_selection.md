@@ -18,7 +18,7 @@ The inner loop selects hyperparameters; the outer loop evaluates the complete tu
 
 ## Nested validation
 
-Defaults: five outer StratifiedGroupKFold folds and four inner StratifiedGroupKFold folds. The outer split list is materialized once and shared by all six predeclared strategies. Within each outer training partition, one inner split list is materialized and shared by the six searches for that outer fold. Every split is checked for pot overlap and class presence.
+Defaults: five outer StratifiedGroupKFold folds and three inner StratifiedGroupKFold folds. The outer split list is materialized once and shared by all six predeclared strategies. Within each outer training partition, one inner split list is materialized and shared by the six searches for that outer fold. Every split is checked for pot overlap and class presence.
 
 The six strategies are three model families crossed with two feature-selection procedures:
 
@@ -53,7 +53,7 @@ No all-data model is saved on Day 8. This deliverable is an evaluation record, n
       --target-column ACTUAL_VERIFIED_LABEL_COLUMN \
       --target-semantics treatment_assignment \
       --date-value VERIFIED_DATE_YYYYMMDD \
-      --outer-splits 5 --inner-splits 4 \
+      --outer-splits 5 --inner-splits 3 \
       --random-state 42 --n-jobs 1
 
 Replace the target column and date only after verifying the actual annotation schema and target semantics. The table must contain the pot/date columns or explicitly supplied alternatives.
