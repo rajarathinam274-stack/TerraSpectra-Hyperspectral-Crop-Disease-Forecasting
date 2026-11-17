@@ -67,3 +67,8 @@ This is one-date classification. Treatment assignment is not symptom detection. 
 ## Verification status
 
 Five focused synthetic tests passed locally. They validate nested group splits, Pipeline-contained feature selection, output generation and input guards. No actual annotation CSV or Day 4 spectral table was available during implementation; no real model score is claimed.
+
+
+### Feature-selection stability record
+
+For every outer fold, the report stores selected band column names and their frequency across outer folds. This is descriptive stability information, not a significance test; feature selection is still learned exclusively inside inner training folds.
