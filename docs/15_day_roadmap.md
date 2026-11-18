@@ -79,3 +79,10 @@ Added scripts/nested_model_selection.py, tests/test_nested_model_selection.py, d
 Five focused synthetic tests, Python compilation and CLI help passed. The tests use 20 synthetic pots and do not establish biological performance. The official dataset page timed out during direct retrieval; actual annotations, ENVI data, coordinate registration and real Day 4 spectra remain unavailable. No real model metric or forecast result is claimed.
 
 Day 8 implementation is complete after commit verification; real-data model selection remains blocked. The six outer-CV strategy scores are estimates for predeclared procedures. Choosing the best among those six after inspecting results adds another selection step; a final choice requires an untouched external or separately predeclared evaluation.
+
+
+## Day 9 progress
+
+Added `scripts/compare_sensors.py`, `tests/test_compare_sensors.py` and `docs/day9_sensor_comparison.md`. The workflow compares VNIR-only, SWIR-only and non-overlapping fusion on exactly matched pot-date samples. It verifies the Day 4 wavelength axes, rejects unmatched keys/label disagreements, uses one shared 5-fold pot-grouped split and fits imputation/scaling within each training fold. Fusion keeps all VNIR bands and SWIR bands above the VNIR maximum plus tolerance, avoiding duplicate representation of the overlap.
+
+Eight focused synthetic tests, Python compilation, CLI help and a synthetic end-to-end 5-fold run passed. These tests do not use the research dataset. Actual annotation CSVs, real VNIR/SWIR spectra and Day 4 audit JSONs remain unavailable in this execution environment; no real sensor comparison or metric is claimed. Day 9 implementation is complete, but the scientific comparison remains blocked pending verified real data.

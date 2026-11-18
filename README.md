@@ -77,9 +77,9 @@ Open the [Day 1 validation notebook](https://colab.research.google.com/github/ra
 
 ## Current status
 
-Days 1–4 have committed research, acquisition, HSI and ROI-processing scaffolds with synthetic validation. Day 5 adds pot-date aggregated spectral EDA, annotation-join checks, wavelength-axis consistency checks, outlier reporting and descriptive PCA. Day 6 adds a pot-grouped Logistic Regression baseline. Day 7 adds a fixed-specification Logistic Regression/RBF-SVM/Random Forest comparison using identical grouped folds.
+Days 1–4 provide dataset, HSI and ROI-processing scaffolds; their real-data exit conditions remain open. Days 5–8 add pot-date EDA, grouped baseline/nonlinear classifiers and nested model selection. Day 9 adds a matched-sample VNIR/SWIR/fusion comparison with wavelength-axis validation, shared pot-grouped folds and training-fold-only preprocessing.
 
-The actual annotation CSVs, ENVI cubes, coordinate convention, crop offsets and Spectralon reference remain unverified in the execution environment. Day 7 has four passing focused synthetic tests, but no real spectra have been modelled. No real spectral trend, model metric or forecasting result is claimed.
+The actual annotation CSVs, ENVI cubes, coordinate registration, Spectralon reference and real Day 5 pot-date tables remain unverified in the execution environment. Day 9 has eight passing focused synthetic tests, but no real sensor comparison or model metric is claimed.
 
 ## Logistic-regression baseline (Day 6)
 
@@ -123,3 +123,8 @@ Run nested pot-grouped tuning only after the Day 5 pot-date table has verified a
       --outer-splits 5 --inner-splits 3 --random-state 42 --n-jobs 1
 
 See docs/day8_nested_model_selection.md. Inner folds tune parameters; outer folds evaluate each predeclared model/feature-selection procedure. Imputation, scaling and ANOVA selection are fitted inside training folds. Treatment-assignment classification is not symptom detection or future forecasting. No real metrics are claimed until verified annotations and spectra are available.
+
+
+## Sensor comparison (Day 9)
+
+After producing separately annotated Day 5 VNIR and SWIR pot-date tables and verifying their Day 4 wavelength audits, run `scripts/compare_sensors.py`. It requires exact pot/date matching, consistent labels and axes, then compares VNIR, SWIR and non-overlapping fusion using identical pot-grouped folds. See `docs/day9_sensor_comparison.md` for the full command, overlap handling and interpretation. No real-data sensor metric is claimed until the annotation joins, ROI extraction and wavelength audits are validated.
