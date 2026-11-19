@@ -128,3 +128,19 @@ See docs/day8_nested_model_selection.md. Inner folds tune parameters; outer fold
 ## Sensor comparison (Day 9)
 
 After producing separately annotated Day 5 VNIR and SWIR pot-date tables and verifying their Day 4 wavelength audits, run `scripts/compare_sensors.py`. It requires exact pot/date matching, consistent labels and axes, then compares VNIR, SWIR and non-overlapping fusion using identical pot-grouped folds. See `docs/day9_sensor_comparison.md` for the full command, overlap handling and interpretation. No real-data sensor metric is claimed until the annotation joins, ROI extraction and wavelength audits are validated.
+
+
+## Date-wise early-detection analysis (Day 10)
+
+After producing a verified VNIR pot-date spectral table and confirming the acquisition-date-to-DPI mapping in the actual metadata, run:
+
+```bash
+python scripts/analyze_early_detection.py \
+  --input-csv reports/eda/vnir/pot_date_spectra.csv \
+  --output-dir models/day10_vnir \
+  --target-column VERIFIED_TREATMENT_COLUMN \
+  --dpi-column VERIFIED_DPI_COLUMN \
+  --n-splits 5 --random-state 42 --bootstrap-reps 1000
+```
+
+The target is the experimental inoculation assignment. The script fits one separate same-date model per date and reuses pot-level folds across dates. It reports treatment-discrimination metrics, not symptom detection or future forecasting. Symptom status is not inferred from treatment labels. See `docs/day10_early_detection_analysis.md` for the scientific boundary and outputs. The focused GitHub Actions test is defined in `.github/workflows/day10-tests.yml`.
