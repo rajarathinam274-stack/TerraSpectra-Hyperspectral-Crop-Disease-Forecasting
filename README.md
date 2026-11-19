@@ -144,3 +144,21 @@ python scripts/analyze_early_detection.py \
 ```
 
 The target is the experimental inoculation assignment. The script fits one separate same-date model per date and reuses pot-level folds across dates. It reports treatment-discrimination metrics, not symptom detection or future forecasting. Symptom status is not inferred from treatment labels. See `docs/day10_early_detection_analysis.md` for the scientific boundary and outputs. The focused GitHub Actions test is defined in `.github/workflows/day10-tests.yml`.
+
+
+## Dataset metadata integrity check
+
+Download the three small annotation files from the [official Data INRAE record](https://doi.org/10.57745/WVP0FJ) into `data/metadata/`, then verify the published MD5 checksums before parsing:
+
+```bash
+md5sum data/metadata/Data_description.csv \
+       data/metadata/VNIR_data.csv \
+       data/metadata/SWIR_data.csv
+```
+
+Expected values:
+- `Data_description.csv`: `2efd148e433016da14a3209e6db575df`
+- `VNIR_data.csv`: `181f1f7a63b0434210d57841e3d7d7f8`
+- `SWIR_data.csv`: `12dc1a89b7f0d648948750247ef488a3`
+
+These are publisher-listed checksums; downloading and matching them remains a local/Colab action. Do not infer the date-to-DPI map or symptom labels from the folder names alone.
