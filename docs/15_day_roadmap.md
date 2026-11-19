@@ -13,7 +13,7 @@ A day is complete only when its artifact exists and its validation status is sta
 | 7 | Nonlinear classifiers | SVM and Random Forest comparison | Macro-F1, per-class recall and confusion matrices reported |
 | 8 | Model selection | Group-aware tuning and feature-selection comparison | No preprocessing or feature-selection leakage |
 | 9 | Sensor comparison | VNIR vs SWIR vs carefully aligned fusion experiment | Modality comparison uses matched samples and fair splits |
-| 10 | Early-detection analysis | Performance by acquisition date / days post inoculation | Earliest reliable pre-symptomatic detection is assessed without time leakage |
+| 10 | Early-detection analysis | Date-wise pot-grouped treatment-discrimination baseline and symptom-label evidence audit | Pre-symptomatic claims require independent symptom labels and complete cohort coverage; otherwise report the limitation explicitly |
 | 11 | Forecasting feasibility | Future-state target specification and time-aware split, or documented no-go decision | Forecasting attempted only if stable repeated identities and future labels exist |
 | 12 | Demonstration pipeline | Lightweight inference/demo interface | Inputs, outputs, model provenance and limitations are explicit |
 | 13 | Robustness and interpretation | Error analysis, feature interpretation and sensitivity checks | Weaknesses, uncertainty and controlled-environment limits are documented |
@@ -86,3 +86,12 @@ Day 8 implementation is complete after commit verification; real-data model sele
 Added `scripts/compare_sensors.py`, `tests/test_compare_sensors.py` and `docs/day9_sensor_comparison.md`. The workflow compares VNIR-only, SWIR-only and non-overlapping fusion on exactly matched pot-date samples. It verifies the Day 4 wavelength axes, rejects unmatched keys/label disagreements, uses one shared 5-fold pot-grouped split and fits imputation/scaling within each training fold. Fusion keeps all VNIR bands and SWIR bands above the VNIR maximum plus tolerance, avoiding duplicate representation of the overlap.
 
 Eight focused synthetic tests, Python compilation, CLI help and a synthetic end-to-end 5-fold run passed. These tests do not use the research dataset. Actual annotation CSVs, real VNIR/SWIR spectra and Day 4 audit JSONs remain unavailable in this execution environment; no real sensor comparison or metric is claimed. Day 9 implementation is complete, but the scientific comparison remains blocked pending verified real data.
+
+
+## Day 10 progress
+
+Added `scripts/analyze_early_detection.py`, `tests/test_analyze_early_detection.py`, `docs/day10_early_detection_analysis.md` and `docs/day10_work_log.md`. The analysis fits a separate same-date Logistic Regression classifier for each acquisition date and reuses one StratifiedGroupKFold pot assignment across dates. Imputation and scaling are fitted inside each training fold. It exports date/fold metrics, pot-level OOF predictions, fold assignments, macro-F1 bootstrap intervals and an audit report.
+
+The source paper reports visual symptom monitoring and progressive necrosis from 7 DPI, but also notes confusion with senescence. The published data description identifies sample/leaf-count annotation tables; a complete per-pot/date symptom-status field has not been verified from the actual CSV contents. The Day 10 script therefore reports treatment-assignment discrimination only and marks symptom status as not assessed. This is not symptom detection or forecasting.
+
+A focused GitHub Actions workflow was added for the Day 10 test file. Synthetic tests validate shared pot folds, date-wise OOF outputs, duplicate pot-date rejection, treatment-label consistency and invalid DPI ordering. Real-data analysis remains blocked pending actual annotation downloads, verified date-to-DPI mapping and validated Day 4 spectra. No real model score or earliest pre-symptomatic date is claimed.
