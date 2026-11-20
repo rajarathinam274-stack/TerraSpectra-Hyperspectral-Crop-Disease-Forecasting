@@ -1,6 +1,10 @@
+import sys
+from pathlib import Path
+
 import pandas as pd
 
-from scripts.audit_forecasting_feasibility import audit_table
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
+from audit_forecasting_feasibility import audit_table
 
 
 def valid_table():
