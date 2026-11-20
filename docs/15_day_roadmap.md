@@ -95,3 +95,12 @@ Added `scripts/analyze_early_detection.py`, `tests/test_analyze_early_detection.
 The source paper reports visual symptom monitoring and progressive necrosis from 7 DPI, but also notes confusion with senescence. The published data description identifies sample/leaf-count annotation tables; a complete per-pot/date symptom-status field has not been verified from the actual CSV contents. The Day 10 script therefore reports treatment-assignment discrimination only and marks symptom status as not assessed. This is not symptom detection or forecasting.
 
 A focused GitHub Actions workflow was added for the Day 10 test file. Synthetic tests validate shared pot folds, date-wise OOF outputs, duplicate pot-date rejection, treatment-label consistency and invalid DPI ordering. Real-data analysis remains blocked pending actual annotation downloads, verified date-to-DPI mapping and validated Day 4 spectra. No real model score or earliest pre-symptomatic date is claimed.
+
+
+## Day 11 progress
+
+Reviewed the published dataset description and the current Day 10 analysis. The folder structure encodes pot number and side, supporting pot-level repeated observations and pot-grouped validation. It does not document persistent individual-leaf IDs across dates. More importantly, the published annotation files are described as sample/leaf-count tables; the source reports visual symptom monitoring but does not document a complete independently assessed symptom-status table with per-pot/per-date future labels and assessment timestamps.
+
+A future-state target is specified as independently assessed symptom status at least a predeclared horizon after the spectral prediction origin, with symptom-negative status at the origin for pre-symptomatic detection. Treatment assignment is explicitly rejected as a forecast target. Added \`scripts/audit_forecasting_feasibility.py\`, nine focused synthetic tests, \`docs/day11_forecasting_feasibility.md\` and \`docs/day11_work_log.md\`.
+
+The audit utility returns NO_GO for a treatment-only manifest because future symptom status, future assessment timestamp, baseline symptom status and assessment-method fields are absent. Nine synthetic tests, Python compilation, CLI help and a treatment-only CLI no-go smoke test passed locally. No real annotation CSVs were downloaded or checksum-verified in this run, and no forecasting model was trained. Day 11 is complete as a documented feasibility/no-go decision; forecasting remains blocked until independent longitudinal symptom records are obtained.
