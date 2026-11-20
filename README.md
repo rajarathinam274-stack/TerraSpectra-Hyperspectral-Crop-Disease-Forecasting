@@ -162,3 +162,8 @@ Expected values:
 - `SWIR_data.csv`: `12dc1a89b7f0d648948750247ef488a3`
 
 These are publisher-listed checksums; downloading and matching them remains a local/Colab action. Do not infer the date-to-DPI map or symptom labels from the folder names alone.
+
+
+## Day 11 — forecasting feasibility
+
+Day 11 records a **no-go** for genuine future disease-state forecasting with the currently documented annotations. Pot-level repeated observations are structurally possible, but a complete independently assessed future symptom-status table is not documented. Treatment assignment is not a future disease outcome. See \`docs/day11_forecasting_feasibility.md\` and run \`scripts/audit_forecasting_feasibility.py\` on any candidate outcome manifest before modeling.
