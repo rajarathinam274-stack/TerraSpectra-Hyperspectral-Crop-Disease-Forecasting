@@ -167,3 +167,7 @@ These are publisher-listed checksums; downloading and matching them remains a lo
 ## Day 11 — forecasting feasibility
 
 Day 11 records a **no-go** for genuine future disease-state forecasting with the currently documented annotations. Pot-level repeated observations are structurally possible, but a complete independently assessed future symptom-status table is not documented. Treatment assignment is not a future disease outcome. See \`docs/day11_forecasting_feasibility.md\` and run \`scripts/audit_forecasting_feasibility.py\` on any candidate outcome manifest before modeling.
+
+## Day 12 — inference demo scaffold
+
+A guarded CLI inference utility is available at scripts/predict.py. It loads a trusted model bundle produced by scripts/train_baseline.py, requires the exact training acquisition date and spectral feature columns, checks one row per pot, and writes predictions/probabilities with explicit target semantics. See docs/day12_demo_pipeline.md for the input contract and command. The scaffold has synthetic tests only: no real-data model artifact or real predictions are available yet. Treatment-assignment classification is not symptom detection or forecasting.
