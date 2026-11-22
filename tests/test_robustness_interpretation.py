@@ -1,8 +1,12 @@
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
+
 import json
 import numpy as np
 import pandas as pd
 import pytest
-from scripts.robustness_interpretation import RobustnessError, bands_from, prepare, run
+from robustness_interpretation import RobustnessError, bands_from, prepare, run
 
 DATE, GROUP = "date_folder_yyyymmdd_candidate", "pot_id_candidate"
 
