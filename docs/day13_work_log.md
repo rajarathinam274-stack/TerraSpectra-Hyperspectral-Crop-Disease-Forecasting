@@ -13,15 +13,18 @@
 - Added held-out out-of-fold predictions and fold metrics for error analysis.
 - Added held-out per-band permutation importance, training-median band ablation and Gaussian-noise sensitivity. Noise scale is estimated from each training fold only.
 - Kept imputation and scaling inside the fitted training-fold Pipeline. The script rejects duplicate pot/date rows, treatment-label drift, insufficient independent groups, class-missing folds, missing columns and all-missing training bands.
-- Added synthetic tests and a focused Day 13 GitHub Actions workflow.
+- Added six synthetic tests and a focused Day 13 GitHub Actions workflow.
 - Added the Day 13 analysis guide and this work log.
 
-## Local verification
+## Local and CI verification
 
-- python -m pytest -q tests/test_robustness_interpretation.py: 6 passed in a local isolated test workspace using synthetic data.
-- python -m py_compile scripts/robustness_interpretation.py: passed.
-- python scripts/robustness_interpretation.py --help: passed.
-- The local test workspace was not a clone of the repository; no real-data experiment was run. GitHub Actions verification is pending until the Day 13 commit is pushed.
+- Local synthetic suite: 6 passed.
+- Python compilation: passed.
+- CLI help: passed.
+- The first GitHub Actions run (45039554818) failed during test collection because the test imported the scripts namespace without adding the repository scripts directory to sys.path.
+- Corrected the test import in commit f848af4d2f6c1f02fdb1fe145b1cc066a76e9fa5.
+- GitHub Actions run 45039651094 completed with conclusion success on that commit. The six focused tests, Python compilation and CLI help all passed.
+- The local test workspace was isolated and was not a clone of the repository; no real-data experiment was run.
 
 ## Scientific status
 
