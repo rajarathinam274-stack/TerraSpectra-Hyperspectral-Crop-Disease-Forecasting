@@ -1,0 +1,31 @@
+name: Day 13 robustness and interpretation tests
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "scripts/robustness_interpretation.py"
+      - "tests/test_robustness_interpretation.py"
+      - ".github/workflows/day13-tests.yml"
+      - "requirements.txt"
+  pull_request:
+    paths:
+      - "scripts/robustness_interpretation.py"
+      - "tests/test_robustness_interpretation.py"
+      - ".github/workflows/day13-tests.yml"
+      - "requirements.txt"
+
+jobs:
+  day13-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+      - run: python -m pip install --upgrade pip
+      - run: python -m pip install -r requirements.txt
+      - run: pytest -q tests/test_robustness_interpretation.py
+      - run: python -m py_compile scripts/robustness_interpretation.py
+      - run: python scripts/robustness_interpretation.py --help
