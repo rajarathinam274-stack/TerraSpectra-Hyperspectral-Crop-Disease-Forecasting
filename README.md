@@ -171,3 +171,8 @@ Day 11 records a **no-go** for genuine future disease-state forecasting with the
 ## Day 12 — inference demo scaffold
 
 A guarded CLI inference utility is available at scripts/predict.py. It loads a trusted model bundle produced by scripts/train_baseline.py, requires the exact training acquisition date and spectral feature columns, checks one row per pot, and writes predictions/probabilities with explicit target semantics. See docs/day12_demo_pipeline.md for the input contract and command. The scaffold has synthetic tests only: no real-data model artifact or real predictions are available yet. Treatment-assignment classification is not symptom detection or forecasting.
+
+
+## Day 15 — reproducibility and handover
+
+The final handover and evidence-qualified status are documented in [`docs/day15_handover.md`](docs/day15_handover.md). The project runtime is declared as Python 3.11 in `.python-version`. The Day 15 GitHub Actions workflow runs the complete synthetic/unit test suite, Python compilation and CLI smoke checks, and uploads a resolved environment report. `requirements.txt` is not an exact lockfile; see the handover guide for environment reproduction and the outstanding real-data validation gates.
