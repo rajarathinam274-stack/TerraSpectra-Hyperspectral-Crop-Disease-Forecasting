@@ -1,0 +1,77 @@
+name: Day 15 reproducibility and handover
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  reproducibility:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: .python-version
+          cache: pip
+          cache-dependency-path: requirements.txt
+
+      - name: Record runtime
+        run: |
+          python --version
+          python -m pip --version
+
+      - name: Install project dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+
+      - name: Run complete synthetic/unit test suite
+        run: python -m pytest -q
+
+      - name: Compile Python sources
+        run: python -m compileall -q scripts tests
+
+      - name: Check command-line interfaces
+        run: |
+          set -e
+          for script in \
+            scripts/inspect_hsi.py \
+            scripts/extract_leaf_spectra.py \
+            scripts/explore_spectra.py \
+            scripts/train_baseline.py \
+            scripts/compare_models.py \
+            scripts/nested_model_selection.py \
+            scripts/compare_sensors.py \
+            scripts/analyze_early_detection.py \
+            scripts/audit_forecasting_feasibility.py \
+            scripts/predict.py \
+            scripts/robustness_interpretation.py
+          do
+            python "$script" --help >/dev/null
+            echo "PASS: $script --help"
+          done
+
+      - name: Capture exact resolved environment
+        run: |
+          python -m pip freeze --all > environment-report.txt
+          sha256sum requirements.txt .python-version > environment-inputs.sha256
+          cat environment-inputs.sha256
+
+      - name: Upload reproducibility manifest
+        uses: actions/upload-artifact@v4
+        with:
+          name: terraspectra-python-environment-${{ github.sha }}
+          path: |
+            environment-report.txt
+            environment-inputs.sha256
+          if-no-files-found: error
+          retention-days: 30
