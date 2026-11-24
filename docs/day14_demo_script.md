@@ -16,7 +16,7 @@ git pull --ff-only origin main
 git log -1 --oneline
 ```
 
-Install the pinned project dependencies:
+Install the project dependencies (note: `requirements.txt` currently specifies direct dependencies without exact version pins; use the Day 15 CI environment artifact for the resolved package versions):
 
 ```bash
 python -m venv .venv
