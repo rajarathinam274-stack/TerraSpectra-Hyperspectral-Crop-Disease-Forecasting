@@ -74,6 +74,20 @@ python -m pip install -r environment-report.txt
 
 The environment report is a resolved package-version snapshot for that CI run, not a cross-platform lockfile. The SHA-256 file records the exact `requirements.txt` and `.python-version` inputs used by the run.
 
+### Verified Day 15 CI result
+
+The first full Day 15 workflow completed successfully on GitHub-hosted Ubuntu with **Python 3.11.18** and **pip 26.3**:
+
+- Workflow run: [45426718311 — Day 15 reproducibility and handover](https://github.com/rajarathinam274-stack/TerraSpectra-Hyperspectral-Crop-Disease-Forecasting/actions/runs/45426718311)
+- Full test suite: **79 passed** (6 warnings; no test failures).
+- Python compilation: passed.
+- CLI smoke checks: all 11 executable interfaces passed.
+- Resolved environment artifact: `terraspectra-python-environment-44db4113a440860844d971646f8fcb569d636b87` (uploaded; 30-day retention).
+
+One scikit-learn `FutureWarning` reports that `SVC(probability=True)` is deprecated in scikit-learn 1.9 and will be removed in 1.11. It does not fail the current tests, but the SVM probability-calibration implementation should be migrated before upgrading to scikit-learn 1.11. Other warnings were runner/action deprecation notices.
+
+The clean clone attempt from the separate execution container could not resolve `github.com`; therefore, the 79-test result is specifically the GitHub Actions run above, not a local run.
+
 ## 3. Dataset acquisition and validation
 
 Primary dataset: Latchoumane et al., *Early detection of Zymoseptoria tritici infection on wheat leaves using hyperspectral imaging data*, Data in Brief 59 (2025), 111404. Dataset DOI: [10.57745/WVP0FJ](https://doi.org/10.57745/WVP0FJ). Retain the source citation and license attribution.
