@@ -8,6 +8,10 @@ import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[1]
 METADATA_DIR = ROOT / "data" / "metadata"
+try:
+    from .metadata_utils import selected_metadata_csv_paths
+except ImportError:
+    from metadata_utils import selected_metadata_csv_paths
 
 COLUMN_HINTS = {
     "identity_or_grouping": (
@@ -57,13 +61,7 @@ def summarize_csv(path: Path) -> dict:
 
 
 def main() -> None:
-    paths = sorted(METADATA_DIR.glob("*.csv"))
-    if not paths:
-        raise FileNotFoundError(
-            f"No annotation CSVs found in {METADATA_DIR}. "
-            "Run scripts/download_metadata.py first."
-        )
-
+    paths = selected_metadata_csv_paths(METADATA_DIR)
     summaries = {path.name: summarize_csv(path) for path in paths}
     comparison = {}
     left, right = "VNIR_data.csv", "SWIR_data.csv"
