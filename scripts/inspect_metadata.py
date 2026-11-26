@@ -1,10 +1,14 @@
-"""Inspect downloaded CSV metadata without modifying source files."""
+"""Inspect configured source metadata CSVs without modifying source files."""
 from pathlib import Path
 
 import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[1]
 METADATA_DIR = ROOT / "data" / "metadata"
+try:
+    from .metadata_utils import selected_metadata_csv_paths
+except ImportError:
+    from metadata_utils import selected_metadata_csv_paths
 
 
 def inspect_csv(path: Path) -> None:
@@ -20,13 +24,7 @@ def inspect_csv(path: Path) -> None:
 
 
 def main() -> None:
-    csv_files = sorted(METADATA_DIR.glob("*.csv"))
-    if not csv_files:
-        raise FileNotFoundError(
-            f"No metadata CSV files found in {METADATA_DIR}. "
-            "Run scripts/download_metadata.py first."
-        )
-    for path in csv_files:
+    for path in selected_metadata_csv_paths(METADATA_DIR):
         inspect_csv(path)
 
 
