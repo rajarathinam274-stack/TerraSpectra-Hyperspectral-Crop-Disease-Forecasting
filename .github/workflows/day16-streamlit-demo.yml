@@ -30,4 +30,4 @@ jobs:
       - name: Compile demo
         run: python -m compileall -q demo
       - name: Test Streamlit startup
-        run: python -m pytest -q tests/test_streamlit_demo.py
+        run: python -m pytest -q demo/test_streamlit_demo.py
