@@ -115,3 +115,12 @@ def test_inference_rejects_duplicate_pot_rows(tmp_path):
     frame.to_csv(source, index=False)
     with pytest.raises(PredictionValidationError, match="one row per independent pot"):
         run_inference(source, model, tmp_path / "out.csv")
+
+def test_inference_rejects_ground_truth_target_column(tmp_path):
+    model = make_bundle(tmp_path / "model.joblib")
+    source = make_input(tmp_path / "input.csv")
+    frame = pd.read_csv(source)
+    frame["treatment"] = ["Control", "Inoculated"]
+    frame.to_csv(source, index=False)
+    with pytest.raises(PredictionValidationError, match="reserved prediction output columns"):
+        run_inference(source, model, tmp_path / "out.csv")
