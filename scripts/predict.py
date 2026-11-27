@@ -149,6 +149,10 @@ def run_inference(
     collisions.extend(
         sorted(column for column in frame.columns if str(column).startswith("probability_"))
     )
+    target_column = str(bundle["target_column"])
+    if target_column in frame.columns:
+        collisions.append(target_column)
+    collisions = sorted(set(collisions))
     if collisions:
         raise PredictionValidationError(
             f"Input already contains reserved prediction output columns: {collisions}"

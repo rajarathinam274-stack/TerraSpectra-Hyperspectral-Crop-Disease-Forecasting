@@ -176,3 +176,8 @@ A guarded CLI inference utility is available at scripts/predict.py. It loads a t
 ## Day 15 — reproducibility and handover
 
 The final handover and evidence-qualified status are documented in [`docs/day15_handover.md`](docs/day15_handover.md). The project runtime is declared as Python 3.11 in `.python-version`. The Day 15 GitHub Actions workflow runs the complete synthetic/unit test suite, Python compilation and CLI smoke checks, and uploads a resolved environment report. `requirements.txt` is not an exact lockfile; see the handover guide for environment reproduction and the outstanding real-data validation gates.
+
+
+## Day 16 — Streamlit demo
+
+A guarded Streamlit interface is available in `demo/app.py`. It accepts a trusted fitted joblib bundle and a date-matched pot-level spectra CSV, displays same-date predictions and supports CSV export. Install `demo/requirements.txt` and launch `streamlit run demo/app.py`. See [`docs/day16_streamlit_demo.md`](docs/day16_streamlit_demo.md) for the input contract and security/scientific limitations. The app smoke test is separate from the core test suite; no real-data model artifact or biological results are available yet.
