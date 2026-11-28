@@ -6,14 +6,14 @@ import pandas as pd
 ROOT = Path(__file__).resolve().parents[1]
 METADATA_DIR = ROOT / "data" / "metadata"
 try:
-    from .metadata_utils import selected_metadata_csv_paths
+    from .metadata_utils import read_source_metadata_csv, selected_metadata_csv_paths
 except ImportError:
-    from metadata_utils import selected_metadata_csv_paths
+    from metadata_utils import read_source_metadata_csv, selected_metadata_csv_paths
 
 
 def inspect_csv(path: Path) -> None:
     print(f"\n{'=' * 72}\nFILE: {path.name}")
-    frame = pd.read_csv(path, encoding="utf-8-sig", low_memory=False)
+    frame = read_source_metadata_csv(path)
     print(f"Shape: {frame.shape}")
     print("\nColumns and dtypes:")
     print(frame.dtypes.to_string())
