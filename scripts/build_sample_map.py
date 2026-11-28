@@ -33,10 +33,11 @@ def summarize_table(path: Path) -> tuple[pd.DataFrame, dict]:
 def compare_modalities(vnir: pd.DataFrame, swir: pd.DataFrame) -> dict:
     keys = ["pot_id", "dpi", "side"]
     merged = vnir.merge(swir, on=keys, suffixes=("_vnir", "_swir"), how="outer", indicator=True)
+    count_diff = merged["leaf_count_vnir"].fillna(-1).ne(merged["leaf_count_swir"].fillna(-1))
     mismatch = (
         merged["_merge"].ne("both")
         | merged["acquisition_status_vnir"].ne(merged["acquisition_status_swir"])
-        | merged["leaf_count_vnir"].ne(merged["leaf_count_swir"])
+        | count_diff
         | merged["genotype_vnir"].ne(merged["genotype_swir"])
         | merged["treatment_assignment_vnir"].ne(merged["treatment_assignment_swir"])
     )
