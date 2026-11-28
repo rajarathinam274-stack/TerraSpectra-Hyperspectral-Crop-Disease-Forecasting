@@ -1,0 +1,46 @@
+name: Day 17 dataset metadata acquisition and audit
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  metadata:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: .python-version
+          cache: pip
+          cache-dependency-path: requirements.txt
+      - name: Install project dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+      - name: Download and checksum annotation CSVs
+        run: python scripts/download_metadata.py
+      - name: Audit annotation tables
+        run: python scripts/audit_annotations.py
+      - name: Build candidate sample map
+        run: python scripts/build_sample_map.py
+      - name: Inspect source metadata
+        run: python scripts/inspect_metadata.py
+      - name: Run software tests and compile
+        run: |
+          python -m pytest -q
+          python -m compileall -q scripts tests
+      - name: Upload dataset metadata and audit outputs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: terraspectra-dataset-metadata-audit-${{ github.sha }}
+          path: data/metadata/**
+          if-no-files-found: warn
+          retention-days: 30
