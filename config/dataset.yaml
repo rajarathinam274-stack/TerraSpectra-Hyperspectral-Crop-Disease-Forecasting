@@ -8,6 +8,11 @@ dataset:
     - "Data_description.csv"
     - "VNIR_data.csv"
     - "SWIR_data.csv"
+  # Pin the publisher-listed MD5 values to detect dataset-version drift.
+  pinned_md5_checksums:
+    Data_description.csv: "2efd148e433016da14a3209e6db575df"
+    VNIR_data.csv: "181f1f7a63b0434210d57841e3d7d7f8"
+    SWIR_data.csv: "12dc1a89b7f0d648948750247ef488a3"
 
 experimental_design:
   pot_count: 48
