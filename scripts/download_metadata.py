@@ -39,6 +39,61 @@ def checksum_matches(content: bytes, checksum: dict) -> bool | None:
     return digest == expected
 
 
+def verify_download_integrity(
+    filename: str,
+    content: bytes,
+    expected_size: int | None,
+    api_checksum: dict | None,
+    pinned_md5: str | None,
+) -> dict:
+    """Fail closed unless size and at least one supported checksum are verified.
+
+    If both a Dataverse checksum and a pinned publisher checksum are available,
+    both must match. The pinned MD5 is a dataset-version integrity guard, not a
+    cryptographic security mechanism.
+    """
+    if expected_size is not None and len(content) != int(expected_size):
+        raise IOError(
+            f"Size mismatch for {filename}: expected {expected_size}, got {len(content)}"
+        )
+
+    api_checksum = api_checksum or {}
+    api_result = checksum_matches(content, api_checksum)
+    if api_result is False:
+        raise IOError(f"Dataverse checksum mismatch for {filename}")
+
+    methods = []
+    if api_result is True:
+        methods.append(f"Dataverse {api_checksum.get('type')} checksum")
+
+    pinned_result = None
+    if pinned_md5:
+        try:
+            actual_md5 = hashlib.md5(content, usedforsecurity=False).hexdigest().lower()
+        except TypeError:  # compatibility fallback for Python implementations
+            actual_md5 = hashlib.md5(content).hexdigest().lower()
+        pinned_result = actual_md5 == str(pinned_md5).lower()
+        if not pinned_result:
+            raise IOError(
+                f"Publisher-pinned MD5 mismatch for {filename}: "
+                f"expected {pinned_md5}, got {actual_md5}"
+            )
+        methods.append("publisher-pinned MD5")
+
+    if not methods:
+        raise IOError(
+            f"No supported checksum available for {filename}; "
+            "download cannot be declared verified."
+        )
+
+    return {
+        "checksum_verified": True,
+        "verification_methods": methods,
+        "dataverse_checksum_verified": api_result,
+        "pinned_md5_verified": pinned_result,
+    }
+
+
 def main() -> None:
     dataset = load_config()["dataset"]
     api = dataset["dataverse_api"].rstrip("/")
@@ -74,6 +129,7 @@ def main() -> None:
     print(f"Dataset inventory saved: {len(inventory)} file records.")
 
     selected = set(dataset.get("selected_metadata_files", []))
+    pinned_checksums = dataset.get("pinned_md5_checksums", {})
     available = {
         item["filename"]: item
         for item in inventory
@@ -94,15 +150,13 @@ def main() -> None:
         response.raise_for_status()
         content = response.content
 
-        expected_size = item.get("filesize")
-        if expected_size is not None and len(content) != int(expected_size):
-            raise IOError(
-                f"Size mismatch for {filename}: expected {expected_size}, got {len(content)}"
-            )
-
-        checksum_result = checksum_matches(content, item.get("checksum") or {})
-        if checksum_result is False:
-            raise IOError(f"Dataverse checksum mismatch for {filename}")
+        integrity = verify_download_integrity(
+            filename=filename,
+            content=content,
+            expected_size=item.get("filesize"),
+            api_checksum=item.get("checksum"),
+            pinned_md5=pinned_checksums.get(filename),
+        )
 
         destination = metadata_dir / Path(filename).name
         destination.write_bytes(content)
@@ -112,11 +166,14 @@ def main() -> None:
             "directory_label": item.get("directory_label", ""),
             "bytes": len(content),
             "dataverse_checksum": item.get("checksum", {}),
-            "dataverse_checksum_verified": checksum_result,
+            **integrity,
             "sha256": hashlib.sha256(content).hexdigest(),
             "local_path": str(destination.relative_to(ROOT)),
         })
-        print(f"Downloaded and verified {filename} ({len(content):,} bytes).")
+        print(
+            f"Downloaded and checksum-verified {filename} "
+            f"({len(content):,} bytes; {', '.join(integrity['verification_methods'])})."
+        )
 
     manifest = {
         "persistent_id": persistent_id,
