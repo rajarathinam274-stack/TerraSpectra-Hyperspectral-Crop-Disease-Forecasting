@@ -17,7 +17,7 @@ Primary source: the public wheat Septoria hyperspectral imaging dataset hosted b
     python scripts/inspect_metadata.py
     pytest -q
 
-The downloader retrieves only the three small annotation CSVs and records file inventory, checksums and SHA-256 hashes. Large VNIR/SWIR image ZIP archives are intentionally not downloaded automatically.
+The downloader retrieves only the three small annotation CSVs and records file inventory, checksum verification methods and SHA-256 hashes. The version-1 metadata files were downloaded and verified against both Dataverse and pinned publisher MD5 checksums. Large VNIR/SWIR image ZIP archives are intentionally not downloaded automatically. See `docs/day17_metadata_acquisition.md` for the verified schema findings and remaining scientific gates.
 
 ## HSI ingestion and calibration
 
@@ -79,7 +79,7 @@ Open the [Day 1 validation notebook](https://colab.research.google.com/github/ra
 
 Days 1–4 provide dataset, HSI and ROI-processing scaffolds; their real-data exit conditions remain open. Days 5–8 add pot-date EDA, grouped baseline/nonlinear classifiers and nested model selection. Day 9 adds a matched-sample VNIR/SWIR/fusion comparison with wavelength-axis validation, shared pot-grouped folds and training-fold-only preprocessing.
 
-The actual annotation CSVs, ENVI cubes, coordinate registration, Spectralon reference and real Day 5 pot-date tables remain unverified in the execution environment. Day 9 has eight passing focused synthetic tests, but no real sensor comparison or model metric is claimed.
+The three version-1 annotation CSVs have been acquired and checksum-verified. Their dataset-specific semicolon/CP1252 parsing and count-level audit are being corrected in PR #5 after the first main-branch audit exposed the source layout. ENVI cubes, coordinate registration, Spectralon reference and real Day 5 pot-date spectra remain unverified. Day 9 has eight passing focused synthetic tests, but no real sensor comparison or model metric is claimed.
 
 ## Logistic-regression baseline (Day 6)
 
