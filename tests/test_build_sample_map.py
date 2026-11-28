@@ -28,3 +28,14 @@ def test_long_inventory_summary_and_modality_mismatch(tmp_path):
     assert comparison["mismatch_count"] == 1
     assert comparison["mismatch_records"][0]["dpi"] == 0
     assert comparison["mismatch_records"][0]["side"] == "D"
+
+
+def test_identical_missing_cells_are_not_reported_as_modality_mismatches(tmp_path):
+    vnir = tmp_path / "VNIR_data.csv"
+    swir = tmp_path / "SWIR_data.csv"
+    _write_count_table(vnir, "01;EPO_68;Infected;2;1;;\n")
+    _write_count_table(swir, "01;EPO_68;Infected;2;1;;\n")
+    long_vnir, _ = summarize_table(vnir)
+    long_swir, _ = summarize_table(swir)
+    comparison = compare_modalities(long_vnir, long_swir)
+    assert comparison["mismatch_count"] == 0
